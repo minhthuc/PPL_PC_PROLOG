@@ -1,4 +1,7 @@
 import lib.DomainConstraint;
+
+import java.time.Year;
+
 /**
  * @overview : A personal computer (PC) is described in terms of the
  *             following attributes: model, year, manufacturer, and components.
@@ -41,7 +44,7 @@ public class PC {
      *         else broke the process
      * </pre>
      */
-    public PC(String model, Integer year, String manufacturer, Set components) {
+    public PC(String model, String year, String manufacturer, Set components) {
         this.setModel(model);
         this.setYear(year);
         this.setManufacturer(manufacturer);
@@ -67,11 +70,15 @@ public class PC {
      *
      * @effects <tt>return True or false when condition of year must be greater than 1970</tt>
      */
-    public boolean yearValidate(Integer year){
-        if (year > 1970){
-            return true;
-        }else {
-            System.out.println("The Year can not less than 1970");
+    public boolean yearValidate(String year){
+        try{
+            if (Integer.parseInt(year )> 1970){
+                return true;
+            }else {
+                System.out.println("The Year can not less than 1970");
+                return false;
+            }
+        }catch (Exception ex){
             return false;
         }
 
@@ -134,8 +141,8 @@ public class PC {
      * @modifies: this.year
      * @effect: if year is valid, this object takes it, else nothing
      */
-    public void setYear(Integer year) {
-        if (yearValidate(year)) this.year = year;
+    public void setYear(String year) {
+        if (yearValidate(year)) this.year =Integer.parseInt(year);
     }
 
 

@@ -4,31 +4,26 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class PCProg {
-    static ArrayList<PC> pcArrayList = new ArrayList<>();
-    static Scanner sc = new Scanner(System.in);
-    static PC pc = new PC();
-    static int size = 0;
-    static String Choice ="";
 
     public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String Choice;
+        ArrayList<PC> pcArrayList = new ArrayList<>();
         System.out.println("Creating a new Computer?");
         System.out.println("Y/N ?");
 
         Choice = sc.nextLine();
 
-        //test
-//        Choice = "y";
         while (Choice.toLowerCase().equals("y")){
             System.out.println("You are creating a new Computer");
-
-            createObject();
-
+            PC pc = createObject();
             pcArrayList.add(pc);
+
             System.out.println(pc.toStringFormated());
             System.out.println("Do you want to make a new computer ? (Y/N)");
             Choice = sc.nextLine();
         }
-        displayReport();
+        displayReport(pcArrayList);
 
 
         System.out.println("Do you want to save report to file?");
@@ -36,7 +31,7 @@ public class PCProg {
         if (choice.toLowerCase().equals("y")){
             System.out.println("Name of file?");
             String filename = sc.nextLine();
-            saveReport(filename);
+            saveReport(filename, pcArrayList);
         }
     }
 
@@ -45,10 +40,10 @@ public class PCProg {
      * @param file
      * @effect write down the report to file
      */
-    public static void saveReport(String file){
+     static void saveReport(String file, ArrayList<PC> pcArrayList){
         try {
             FileWriter fileWriter = new FileWriter(file);
-                fileWriter.write(displayReport2String());
+                fileWriter.write(displayReport2String(pcArrayList));
             fileWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -61,13 +56,13 @@ public class PCProg {
      *          the columns respectively are
      *          model   | year   | manufacture   | Components
      */
-    public static void displayReport(){
+     static void displayReport(ArrayList<PC> pcArrayList){
         String rs = "";
-        rs += headerGenerate(100, "PCPROG REPOR");
+        rs += headerGenerate(getMaxArrayList(pcArrayList), "PCPROG REPOR");
         int i = 1;
         for (PC pc : pcArrayList){
             rs+= pc.leftAlign(4, String.valueOf(i));
-            rs += pc.toStringFormated();
+            rs += pc.toStringFormated() + "\n";
             i++;
         }
         System.out.println(rs);
@@ -78,13 +73,13 @@ public class PCProg {
      *          the columns respectively are
      *          model   | year   | manufacture   | Components
      */
-    public static String displayReport2String(){
+     static String displayReport2String(ArrayList<PC> pcArrayList){
         String rs = "";
-        rs += headerGenerate(100, "PCPROG REPOR");
+        rs += headerGenerate(getMaxArrayList(pcArrayList), "PCPROG REPOR");
         int i = 1;
         for (PC pc : pcArrayList){
             rs+= pc.leftAlign(4, String.valueOf(i));
-            rs += pc.toStringFormated();
+            rs += pc.toStringFormated() + "\n";
             i++;
         }
         return rs;
@@ -92,15 +87,13 @@ public class PCProg {
 
     /**
      *
-     * @param length
-     * @param content
      * @return header as length character with title is content
      * like
      * ----------------------------------------------------------
      *                          content
      * ----------------------------------------------------------
      */
-    public static String headerGenerate(int length, String content){
+     static String headerGenerate(int length, String content){
         String dash = "";
         String header = "";
         for (int i = 0; i<length; i++){
@@ -117,37 +110,31 @@ public class PCProg {
     /**
      * @effect: the process that user can follow create a PC
      */
-    public static void createObject(){
-        pc = new PC();
+     static PC createObject(){
+        Scanner sc = new Scanner(System.in);
+        PC pc = new PC();
         //add model
         System.out.println("Fill in to add model to your computer");
         String model = sc.nextLine();
 
-        //test
-//            String model = "Vostro 3650MT";
         while (!pc.modelValidate(model)){
             System.out.println("Please re-add model to your computer");
             model = sc.nextLine();
-
         }
         pc.setModel(model);
 
         //add year
         System.out.println("Fill in to add Year to your computer");
-        int year = sc.nextInt();
+        String year = sc.nextLine();
 
         //test
 //            int year = 2016;
-        sc.nextLine();
         while (!pc.yearValidate(year)){
             System.out.println("Please re-add year to your computer");
-            year = sc.nextInt();
-
+            year =sc.nextLine();
         }
         pc.setYear(year);
 
-        //test
-//            System.out.println("pass");
         //add manufacture
         System.out.println("Fill in to add Manufacture to your computer");
         String manufacturer = sc.nextLine();
@@ -162,18 +149,33 @@ public class PCProg {
         System.out.println("Adding components in");
         System.out.println("Type your component");
         String components = sc.nextLine();
-        while (!components.toLowerCase().equals("y")){
+        while (!components.toLowerCase().equals("n")){
             while (set.isDuplicate(components)){
                 System.out.println("re-add components to set");
                 components = sc.nextLine();
             }
             set.addPart(components);
-            System.out.println("do you want to cancel adding?");
-            System.out.println("if not please continue to add");
-            System.out.println("next component!");
+            System.out.println("do you want to adding more?");
             components = sc.nextLine();
-
         }
         pc.setComponents(set);
+        System.out.println(set+" Added into Set");
+        return pc;
+    }
+
+
+    /**
+     *
+     * @param arrayList
+     * @return size of the highest unit's length
+     */
+    public static int getMaxArrayList(ArrayList<PC> arrayList){
+         int max = 0;
+        for (PC pc : arrayList) {
+            if (max < pc.toStringFormated().length()){
+                max = pc.toStringFormated().length();
+            }
+        }
+        return max;
     }
 }
